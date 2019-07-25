@@ -1,16 +1,25 @@
 import React, { Component } from 'react';
-import { ScrollView } from 'react-native';
+import { ScrollView, Text } from 'react-native';
 import axios from 'axios';
 import AlbumDetail from './AlbumDetail';
 
 class AlbumList extends Component {
   state = { albums: [] };
 
-  componentWillMount() {
+  componentDidMount() {
     console.log('lifecycle event componentWillMount');
     //debugger;
-    axios.get('https://rallycoding.herokuapp.com/api/music_albums')
-      .then(response => this.setState({ albums: response.data }));
+    // axios.get('https://rallycoding.herokuapp.com/api/music_albums')
+    //   .then(response => this.setState({ albums: response.data }));
+
+      this.loadData();
+  }
+
+  loadData = async () => {
+    const res = await axios.get('https://rallycoding.herokuapp.com/api/music_albums');
+    const { data } = res;
+
+    return this.setState({ albums: data });
   }
 
   renderAlbums() {
@@ -21,10 +30,15 @@ class AlbumList extends Component {
 
   render() {
     console.log(this.state);
+    const { albums } = this.state;
 
     return (
       <ScrollView>
-        {this.renderAlbums()}
+        {
+          (albums.length === 0)
+            ? (<Text>Loading ...</Text>)
+            : this.renderAlbums()
+        }
       </ScrollView>
     );
   }
